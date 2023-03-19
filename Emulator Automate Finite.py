@@ -1,8 +1,5 @@
 import sys
-from tkinter.tix import COLUMN, ROW
 import tkinter as tk
-from tkinter.ttk import Style
-from turtle import width
 
 def progr(date_intrare , fisier="BD.txt"):
 	def reading(fisier):
@@ -42,15 +39,15 @@ def progr(date_intrare , fisier="BD.txt"):
 				elif 'F' in i:
 					list_of_states['F']=[i[0]]
 				if 'None' in list_of_states and 'F' not in i and 'S' not in i:
-						list_of_states.append(i[0])
-				elif 'F' not in i and 'S' not in i :
-						list_of_states['None']=[i[0]]
+					list_of_states['None'].append(i[0])
+				else:
+					list_of_states['None']=[i[0]]
 		else:
 			if 'S' not in list_of_states:
-				print("The startup state doesn't exist")
+				return("The startup state doesn't exist")
 				sys.exit()
 			elif 'F' not in list_of_states:
-				print("The accept state doesn't exist so answer is Declined")
+				return("The accept state doesn't exist so answer is Declined")
 				sys.exit()
 		return(list_of_states)
 
@@ -74,21 +71,18 @@ def progr(date_intrare , fisier="BD.txt"):
 		lista = reading(fisier)
 		list_of_states = States(reading(fisier))
 		edges_set = Delta(reading(fisier))
-		test=str(date_intrare)
 		current_state=list_of_states['S'][0]
-
-		for current_input in range(len(test)-1):
-
-			if (test[current_input] not in lista['Sigma']):    #verificam daca in baza de date mai exact in [Sigma] exista inputul
+		date_intrare=date_intrare.strip()
+		
+		for current_input in date_intrare:
+			if (current_input not in lista['Sigma']):    #verificam daca in baza de date mai exact in [Sigma] exista inputul
 				return("Sigma or input is wrong")
 				sys.exit()
 
-			verif=0
-			for aux_state in range(len(edges_set[current_state])):
-				if test[current_input]==edges_set[current_state][aux_state]:
-					current_state=edges_set[current_state][aux_state+1]
-				else:
-					verif+=1
+			if current_input in edges_set[current_state]:
+				for aux_state in range(0,len(edges_set[current_state])-1,+2):
+					if current_input==edges_set[current_state][aux_state]:
+						current_state=edges_set[current_state][aux_state+1]
 
 		if current_state in list_of_states['F']:
 			aux="Accepted"
